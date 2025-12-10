@@ -2,40 +2,54 @@ import flet as ft
 from app.src.services.auth_service import AuthService
 
 
-class RegisterView(ft.Control): 
-    def __init__(self, on_success=None):
-        super().__init__()
-        self.on_success = on_success
-        self.auth = AuthService()
+def register_view(page: ft.Page, on_success=None):
+    """Create registration view as a function"""
+    # Assuming AuthService exists
+    auth = AuthService()
 
-        self.name = ft.TextField(label="Full Name", width=350)
-        self.email = ft.TextField(label="Email", width=350)
-        self.username = ft.TextField(label="Username", width=350)
-        self.password = ft.TextField(
-            label="Password", password=True, can_reveal_password=True, width=350
+    # Create controls
+    name = ft.TextField(label="Full Name", width=350)
+    email = ft.TextField(label="Email", width=350)
+    username = ft.TextField(label="Username", width=350)
+    password = ft.TextField(
+        label="Password", password=True, can_reveal_password=True, width=350
+    )
+    status = ft.Text("", color=ft.Colors.RED)
+
+    def handle_register(e):
+        valid, msg = auth.register(
+            name=name.value,
+            email=email.value,
+            username=username.value,
+            password=password.value,
         )
-        self.status = ft.Text("", color=ft.Colors.RED)
+        status.value = msg
+        status.color = ft.Colors.GREEN if valid else ft.Colors.RED
+        page.update()
 
-    def build(self):
-        return ft.Column(
+        if valid and on_success:
+            on_success()
+
+    return ft.Container(
+        content=ft.Column(
             controls=[
                 ft.Container(
                     content=ft.Column(
                         [
                             ft.Text("Create Account", size=24, weight="bold"),
-                            self.name,
-                            self.email,
-                            self.username,
-                            self.password,
+                            name,
+                            email,
+                            username,
+                            password,
                             ft.ElevatedButton(
                                 "Register",
-                                on_click=self.handle_register,
+                                on_click=handle_register,
                                 bgcolor=ft.Colors.BLUE_500,
                                 color=ft.Colors.WHITE,
                                 height=45,
                                 width=350,
                             ),
-                            self.status,
+                            status,
                         ],
                         spacing=12,
                     ),
@@ -47,18 +61,7 @@ class RegisterView(ft.Control):
             alignment="center",
             horizontal_alignment="center",
             expand=True,
-        )
-
-    def handle_register(self, e):
-        valid, msg = self.auth.register(
-            name=self.name.value,
-            email=self.email.value,
-            username=self.username.value,
-            password=self.password.value,
-        )
-        self.status.value = msg
-        self.status.color = ft.Colors.GREEN if valid else ft.Colors.RED
-        self.update()
-
-        if valid and self.on_success:
-            self.on_success()
+        ),
+        alignment=ft.alignment.center,
+        expand=True,
+    )

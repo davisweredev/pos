@@ -1,18 +1,35 @@
 import bcrypt
+from sqlmodel import select
+from app.src.database.db import db
+from app.src.models.user import User
 
 
 class AuthService:
-    def __init__(self):
-        self.users = []  # temporary storage for testing
+    """Handles user registration and authentication."""
 
     def register(self, name, email, username, password):
         if not all([name, email, username, password]):
             return False, "All fields are required."
-        if any(u["username"] == username for u in self.users):
-            return False, "Username already exists."
 
-        hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        self.users.append(
-            {"name": name, "email": email, "username": username, "password": hashed}
-        )
+        # check if username/email exists
+        with next(db.get_session()) as session:
+            existing = session.exec(
+                select(User).where((User.username == username) | (User.email == email))
+            ).first()
+            if existing:
+                return False, "Username or email already exists."
+
+            # hash password
+            hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+            # create user
+            user = User(
+                full_name=name,
+                email=email,
+                username=username,
+                password_hash=hashed,
+            )
+            session.add(user)
+            session.commit()
+
         return True, "Registration successful!"
