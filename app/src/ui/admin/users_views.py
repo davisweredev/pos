@@ -18,8 +18,7 @@ class UserManagementView(ft.Column):
         self.password = ft.TextField(
             label="Password", password=True, can_reveal_password=True, width=250
         )
-
-        # Set the controls property to define the view
+        
         self.controls = [
             ft.Text("Users Management", size=24, weight="bold"),
             ft.Row([self.full_name, self.email, self.username, self.password]),
