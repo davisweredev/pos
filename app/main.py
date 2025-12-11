@@ -6,8 +6,9 @@ from app.src.models.user import User
 
 def main(page: ft.Page):
     page.title = "Admin Dashboard"
+    page.scroll = 'auto'
     db.create_tables()
-    users_panel = UserManagementView()
+    users_panel = UserManagementView(page)
     page.add(users_panel)
     users_panel.refresh_users()
 
