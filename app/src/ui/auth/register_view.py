@@ -4,10 +4,8 @@ from app.src.services.auth_service import AuthService
 
 def register_view(page: ft.Page, on_success=None):
     """Create registration view as a function"""
-    # Assuming AuthService exists
     auth = AuthService()
-
-    # Create controls
+    
     name = ft.TextField(label="Full Name", width=350)
     email = ft.TextField(label="Email", width=350)
     username = ft.TextField(label="Username", width=350)
