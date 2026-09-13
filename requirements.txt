@@ -1,4 +1,5 @@
 flet==0.86.5
+flet-charts==0.86.5
 sqlmodel==0.0.42
 SQLAlchemy==2.0.52
 bcrypt==5.0.0
