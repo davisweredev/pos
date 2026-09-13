@@ -8,4 +8,4 @@ def main(page: ft.Page):
     app.start()
 
 
-ft.app(target=main, assets_dir="app/assets")
+ft.run(main=main, assets_dir="app/assets")
